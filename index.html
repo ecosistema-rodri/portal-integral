@@ -3,450 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0f172a">
-    <title>Portal Rodrigo | Bitácora Córdoba</title>
-
-    <link rel="preconnect" href="https://unpkg.com" crossorigin>
-    <link rel="preconnect" href="https://basemaps.cartocdn.com" crossorigin>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-
+    <title>Portal-Rodrigo | Mapa de Cosquín</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <style>
         :root {
-            --bg: #0b1120;
-            --surface: #111827;
-            --surface-2: #1e293b;
-            --surface-3: #334155;
-            --accent: #10b981;
-            --accent-dark: #059669;
-            --text: #f8fafc;
-            --muted: #94a3b8;
-            --border: rgba(148, 163, 184, .18);
-            --danger: #f87171;
-            --shadow: 0 18px 50px rgba(0, 0, 0, .28);
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #10b981;
+            --accent-hover: #059669;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        html, body { width: 100%; height: 100%; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
 
         body {
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
             overflow: hidden;
         }
 
         header {
-            min-height: 66px;
-            padding: .85rem 1.25rem;
-            background: rgba(17, 24, 39, .96);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
+            background-color: var(--card-bg);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 1rem;
-            position: relative;
             z-index: 1000;
         }
 
-        .brand { display: flex; flex-direction: column; gap: .15rem; }
-        .brand h1 { font-size: 1.1rem; font-weight: 750; letter-spacing: -.02em; }
-        .brand h1 span { color: var(--accent); }
-        .brand small { color: var(--muted); font-size: .72rem; }
-
-        .badge {
-            display: inline-flex;
+        header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
             align-items: center;
-            gap: .4rem;
-            background: rgba(16, 185, 129, .12);
-            color: #6ee7b7;
-            border: 1px solid rgba(16, 185, 129, .45);
-            padding: .35rem .65rem;
-            border-radius: 999px;
-            font-size: .72rem;
-            font-weight: 700;
-            white-space: nowrap;
+            gap: 0.5rem;
         }
 
-        .badge::before {
-            content: "";
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--accent);
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, .12);
+        header h1 span {
+            color: var(--accent-color);
+        }
+
+        .badge {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
 
         #app-container {
             display: flex;
-            height: calc(100vh - 66px);
+            flex: 1;
             position: relative;
             overflow: hidden;
         }
 
-        #map { flex: 1; min-width: 0; height: 100%; z-index: 1; background: #0f172a; }
+        #map {
+            flex: 1;
+            height: 100%;
+            z-index: 1;
+        }
 
+        /* Sidebar info panel */
         #sidebar {
-            width: min(420px, 38vw);
-            min-width: 340px;
-            background: linear-gradient(180deg, rgba(30,41,59,.99), rgba(15,23,42,.99));
-            border-left: 1px solid var(--border);
+            width: 380px;
+            background-color: var(--card-bg);
+            border-left: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            z-index: 500;
-            box-shadow: -10px 0 35px rgba(0,0,0,.24);
+            z-index: 2;
+            transition: transform 0.3s ease;
+            box-shadow: -4px 0 15px rgba(0,0,0,0.3);
         }
 
-        .sidebar-header { padding: 1.15rem 1.25rem 1rem; border-bottom: 1px solid var(--border); }
-        .sidebar-header h2 { font-size: 1.18rem; line-height: 1.3; margin-bottom: .38rem; }
-        .location-tag { color: var(--muted); font-size: .82rem; }
-        .sidebar-body { padding: 1.15rem 1.25rem 2rem; overflow-y: auto; flex: 1; }
+        .sidebar-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.15rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-header .location-tag {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .sidebar-body {
+            padding: 1.25rem;
+            overflow-y: auto;
+            flex: 1;
+        }
 
         .section-title {
-            font-size: .72rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: .11em;
-            color: var(--muted);
-            margin: 1.25rem 0 .7rem;
-            font-weight: 800;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            margin-top: 1rem;
         }
-        .section-title:first-of-type { margin-top: .9rem; }
+
+        .section-title:first-child {
+            margin-top: 0;
+        }
 
         .date-badge {
-            display: inline-flex;
-            background: rgba(148,163,184,.12);
-            border: 1px solid var(--border);
+            display: inline-block;
+            background: #334155;
             color: #e2e8f0;
-            padding: .32rem .55rem;
-            border-radius: 7px;
-            font-size: .78rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
         }
 
-        .summary-text { font-size: .91rem; line-height: 1.65; color: #cbd5e1; }
-        .notes-list { list-style: none; display: grid; gap: .55rem; }
-        .notes-list li { position: relative; padding-left: 1.3rem; font-size: .87rem; color: #cbd5e1; line-height: 1.5; }
-        .notes-list li::before { content: "✓"; position: absolute; left: 0; top: 0; color: var(--accent); font-weight: 900; }
-
-        .gallery-status {
-            min-height: 18px;
-            margin-bottom: .55rem;
-            font-size: .72rem;
-            color: var(--muted);
+        .summary-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
         }
-        .gallery-status.error { color: #fca5a5; }
 
-        .gallery-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem; }
-        .gallery-card {
+        /* Notes list */
+        .notes-list {
+            list-style: none;
+            margin-bottom: 1.25rem;
+        }
+
+        .notes-list li {
             position: relative;
-            overflow: hidden;
-            height: 122px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            background: #0f172a;
-            cursor: zoom-in;
-            isolation: isolate;
+            padding-left: 1.25rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            line-height: 1.4;
         }
-        .gallery-card:first-child { grid-column: 1 / -1; height: 180px; }
-        .gallery-item { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform .3s ease, filter .3s ease; }
-        .gallery-card:hover .gallery-item { transform: scale(1.045); filter: brightness(1.07); }
-        .gallery-index {
+
+        .notes-list li::before {
+            content: "✓";
             position: absolute;
-            right: .45rem;
-            bottom: .45rem;
-            z-index: 2;
-            padding: .18rem .42rem;
-            border-radius: 999px;
-            background: rgba(2,6,23,.72);
-            color: #fff;
-            font-size: .67rem;
-            backdrop-filter: blur(8px);
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
         }
 
-        .image-error {
-            height: 100%; width: 100%; display: grid; place-items: center; text-align: center;
-            padding: .8rem; color: #fecaca; font-size: .72rem; line-height: 1.35;
-            background: linear-gradient(135deg, rgba(127,29,29,.26), rgba(15,23,42,.96));
+        /* Gallery */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
         }
 
+        .gallery-item {
+            width: 100%;
+            height: 110px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+            filter: brightness(1.1);
+        }
+
+        /* Custom Leaflet Marker Styling */
         .custom-check-icon {
-            background: var(--accent);
-            border: 2px solid #fff;
+            background-color: var(--accent-color);
+            border: 2px solid #ffffff;
             border-radius: 50%;
-            color: #fff;
+            color: white;
             text-align: center;
             line-height: 28px;
-            font-weight: 900;
+            font-weight: bold;
             font-size: 14px;
-            box-shadow: 0 5px 18px rgba(0,0,0,.42);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            cursor: pointer;
         }
 
-        .leaflet-control-zoom a { background: #1e293b !important; color: white !important; border-color: #334155 !important; }
-        .leaflet-control-attribution { background: rgba(15,23,42,.78) !important; color: #cbd5e1 !important; }
-        .leaflet-control-attribution a { color: #6ee7b7 !important; }
-
-        #lightbox {
-            position: fixed; inset: 0; z-index: 3000; display: none; place-items: center;
-            padding: 2rem; background: rgba(2,6,23,.92); backdrop-filter: blur(12px);
-        }
-        #lightbox.open { display: grid; }
-        #lightbox img { max-width: min(1100px, 92vw); max-height: 84vh; border-radius: 14px; box-shadow: var(--shadow); }
-        .lightbox-close {
-            position: fixed; top: 1.1rem; right: 1.25rem; width: 42px; height: 42px;
-            border: 1px solid rgba(255,255,255,.18); border-radius: 50%; background: rgba(30,41,59,.72);
-            color: white; font-size: 1.35rem; cursor: pointer;
-        }
-        .lightbox-caption { margin-top: .8rem; color: #cbd5e1; font-size: .83rem; text-align: center; }
-
-        @media (max-width: 820px) {
-            header { min-height: 62px; padding: .72rem .9rem; }
-            .brand small { display: none; }
-            #app-container { height: calc(100vh - 62px); flex-direction: column; }
-            #map { min-height: 47%; }
-            #sidebar { width: 100%; min-width: 0; height: 53%; border-left: 0; border-top: 1px solid var(--border); }
-            .sidebar-header { padding: .8rem 1rem .7rem; }
-            .sidebar-body { padding: .9rem 1rem 1.5rem; }
-            .gallery-card:first-child { height: 150px; }
-            .gallery-card { height: 105px; }
+        /* Responsive */
+        @media (max-width: 768px) {
+            #app-container {
+                flex-direction: column;
+            }
+            #sidebar {
+                width: 100%;
+                height: 40%;
+            }
         }
     </style>
 </head>
 <body>
-<header>
-    <div class="brand">
-        <h1>Portal Rodrigo <span>/ Bitácora Córdoba</span></h1>
-        <small>Mapa personal de lugares, recorridos y recuerdos</small>
+
+    <header>
+        <h1>Portal-Rodrigo <span>/ Bitácora Córdoba</span></h1>
+        <span class="badge">Estatus: Visitado</span>
+    </header>
+
+    <div id="app-container">
+        <!-- Mapa -->
+        <div id="map"></div>
+
+        <!-- Panel Lateral de Información -->
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <h2 id="place-title">Cargando...</h2>
+                <div class="location-tag">📍 <span id="place-location">-</span></div>
+            </div>
+            <div class="sidebar-body">
+                <span class="date-badge" id="place-date">-</span>
+
+                <div class="section-title">Resumen</div>
+                <p class="summary-text" id="place-summary">-</p>
+
+                <div class="section-title">Notas de la Visita</div>
+                <ul class="notes-list" id="place-notes"></ul>
+
+                <div class="section-title">Galería de Fotos</div>
+                <div class="gallery-grid" id="place-gallery"></div>
+            </div>
+        </aside>
     </div>
-    <span class="badge">Visitado</span>
-</header>
 
-<div id="app-container">
-    <div id="map" aria-label="Mapa interactivo de Cosquín"></div>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-    <aside id="sidebar">
-        <div class="sidebar-header">
-            <h2 id="place-title">Cargando...</h2>
-            <div class="location-tag">📍 <span id="place-location">-</span></div>
-        </div>
-        <div class="sidebar-body">
-            <span class="date-badge" id="place-date">-</span>
+    <script>
+        // -------------------------------------------------------------
+        // 1. BASE DE DATOS ESTÁTICA (JSON incorporado)
+        // -------------------------------------------------------------
+        const datosViaje = {
+            id: "cosquin-2025",
+            titulo: "Escapada a Cosquín & Pan de Azúcar",
+            localidad: "Cosquín, Córdoba",
+            coordenadas: [-31.2444, -64.4658],
+            fecha: "12 de Octubre, 2025",
+            resumen: "Fuimos a pasar el día a Cosquín. Recorrimos el centro, la Plaza Próspero Molina y subimos al Cerro Pan de Azúcar para ver el atardecer.",
+            notas: [
+                "Merendamos unos mates con criollos a orillas del Río Cosquín.",
+                "Subimos al Cerro Pan de Azúcar en la aerosolilla.",
+                "Excelente vista panóramica de todo el Valle de Punilla.",
+                "Compramos alfajores artesanales en el centro."
+            ],
+            // Rutas relativas a las fotos guardadas en el repositorio (assets/fotos/)
+            fotos: [
+                "assets/fotos/cosquin-1.jpeg",
+                "assets/fotos/cosquin-2.jpeg",
+                "assets/fotos/cosquin-3.jpeg",
+                "assets/fotos/cosquin-4.jpeg",
+                "assets/fotos/cosquin-5.jpeg"
+            ]
+        };
 
-            <div class="section-title">Resumen</div>
-            <p class="summary-text" id="place-summary">-</p>
+        // -------------------------------------------------------------
+        // 2. INICIALIZACIÓN DEL MAPA
+        // -------------------------------------------------------------
+        // Centramos el mapa en Cosquín con nivel de zoom 13
+        const map = L.map('map').setView(datosViaje.coordenadas, 13);
 
-            <div class="section-title">Notas de la visita</div>
-            <ul class="notes-list" id="place-notes"></ul>
+        // Capa de mapa (CartoDB Positron: limpia, oscura/elegante)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
 
-            <div class="section-title">Galería de fotos</div>
-            <div class="gallery-status" id="gallery-status">Comprobando fotografías…</div>
-            <div class="gallery-grid" id="place-gallery"></div>
-        </div>
-    </aside>
-</div>
-
-<div id="lightbox" role="dialog" aria-modal="true" aria-label="Visor de fotografía">
-    <button class="lightbox-close" type="button" aria-label="Cerrar">×</button>
-    <div>
-        <img id="lightbox-image" alt="Fotografía ampliada">
-        <div class="lightbox-caption" id="lightbox-caption"></div>
-    </div>
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
-<script>
-    'use strict';
-
-    // -----------------------------------------------------------------
-    // 1. DATOS DEL LUGAR
-    // Las rutas NO comienzan con "/". Esto es importante en GitHub Pages
-    // cuando el sitio vive bajo https://usuario.github.io/nombre-repo/
-    // -----------------------------------------------------------------
-    const datosViaje = {
-        id: 'cosquin-2025',
-        titulo: 'Escapada a Cosquín & Pan de Azúcar',
-        localidad: 'Cosquín, Córdoba',
-        coordenadas: [-31.2444, -64.4658],
-        fecha: '12 de octubre de 2025',
-        resumen: 'Fuimos a pasar el día a Cosquín. Recorrimos el centro, la Plaza Próspero Molina y subimos al Cerro Pan de Azúcar para ver el atardecer.',
-        notas: [
-            'Merendamos unos mates con criollos a orillas del Río Cosquín.',
-            'Subimos al Cerro Pan de Azúcar en la aerosilla.',
-            'Excelente vista panorámica de todo el Valle de Punilla.',
-            'Compramos alfajores artesanales en el centro.'
-        ],
-        fotos: [
-            'assets/fotos/cosquin-1.jpeg',
-            'assets/fotos/cosquin-2.jpeg',
-            'assets/fotos/cosquin-3.jpeg',
-            'assets/fotos/cosquin-4.jpeg',
-            'assets/fotos/cosquin-5.jpeg'
-        ]
-    };
-
-    // -----------------------------------------------------------------
-    // 2. RESOLUCIÓN ROBUSTA DE ASSETS PARA GITHUB PAGES
-    // document.baseURI conserva automáticamente /nombre-del-repo/
-    // -----------------------------------------------------------------
-    function assetUrl(rutaRelativa) {
-        return new URL(rutaRelativa, document.baseURI).href;
-    }
-
-    // -----------------------------------------------------------------
-    // 3. MAPA
-    // -----------------------------------------------------------------
-    const map = L.map('map', { zoomControl: true }).setView(datosViaje.coordenadas, 13);
-
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-        subdomains: 'abcd',
-        maxZoom: 19
-    }).addTo(map);
-
-    const checkIcon = L.divIcon({
-        className: 'custom-check-icon',
-        html: '✓',
-        iconSize: [30, 30],
-        iconAnchor: [15, 15]
-    });
-
-    const marker = L.marker(datosViaje.coordenadas, { icon: checkIcon }).addTo(map);
-    marker.bindTooltip(datosViaje.localidad, { direction: 'top', offset: [0, -12] });
-
-    // -----------------------------------------------------------------
-    // 4. LIGHTBOX
-    // -----------------------------------------------------------------
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImage = document.getElementById('lightbox-image');
-    const lightboxCaption = document.getElementById('lightbox-caption');
-
-    function abrirLightbox(src, alt) {
-        lightboxImage.src = src;
-        lightboxImage.alt = alt;
-        lightboxCaption.textContent = alt;
-        lightbox.classList.add('open');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function cerrarLightbox() {
-        lightbox.classList.remove('open');
-        lightboxImage.removeAttribute('src');
-        document.body.style.overflow = '';
-    }
-
-    document.querySelector('.lightbox-close').addEventListener('click', cerrarLightbox);
-    lightbox.addEventListener('click', event => {
-        if (event.target === lightbox) cerrarLightbox();
-    });
-    document.addEventListener('keydown', event => {
-        if (event.key === 'Escape' && lightbox.classList.contains('open')) cerrarLightbox();
-    });
-
-    // -----------------------------------------------------------------
-    // 5. GALERÍA
-    // Sin fallback externo: si un archivo falla, se informa la URL real.
-    // Esto permite diagnosticar GitHub Pages en vez de esconder el error.
-    // -----------------------------------------------------------------
-    function crearFoto(ruta, index, total, estado) {
-        const card = document.createElement('div');
-        card.className = 'gallery-card';
-
-        const img = document.createElement('img');
-        const url = assetUrl(ruta);
-        const alt = `Foto ${index + 1} de ${datosViaje.localidad}`;
-
-        img.src = url;
-        img.alt = alt;
-        img.className = 'gallery-item';
-        img.loading = index === 0 ? 'eager' : 'lazy';
-        img.decoding = 'async';
-        if (index === 0) img.fetchPriority = 'high';
-
-        const number = document.createElement('span');
-        number.className = 'gallery-index';
-        number.textContent = `${index + 1}/${total}`;
-
-        img.addEventListener('load', () => {
-            estado.cargadas += 1;
-            actualizarEstadoGaleria(estado, total);
-        }, { once: true });
-
-        img.addEventListener('error', () => {
-            estado.errores += 1;
-            card.innerHTML = '';
-            const errorBox = document.createElement('div');
-            errorBox.className = 'image-error';
-            errorBox.innerHTML = `<div><strong>Foto no disponible</strong><br>${ruta}</div>`;
-            card.appendChild(errorBox);
-            actualizarEstadoGaleria(estado, total);
-            console.error('[Galería] GitHub Pages no pudo cargar:', url);
-        }, { once: true });
-
-        img.addEventListener('click', () => abrirLightbox(url, alt));
-        card.append(img, number);
-        return card;
-    }
-
-    function actualizarEstadoGaleria(estado, total) {
-        const el = document.getElementById('gallery-status');
-        const procesadas = estado.cargadas + estado.errores;
-
-        if (procesadas < total) {
-            el.className = 'gallery-status';
-            el.textContent = `Cargando fotografías… ${procesadas}/${total}`;
-            return;
-        }
-
-        if (estado.errores === 0) {
-            el.className = 'gallery-status';
-            el.textContent = `${estado.cargadas} fotografías cargadas correctamente desde el repositorio.`;
-        } else {
-            el.className = 'gallery-status error';
-            el.textContent = `${estado.errores} fotografía(s) no pudieron cargarse. Revisá la consola del navegador para ver la URL exacta.`;
-        }
-    }
-
-    // -----------------------------------------------------------------
-    // 6. PANEL
-    // -----------------------------------------------------------------
-    function cargarDatosPanel(data) {
-        document.getElementById('place-title').textContent = data.titulo;
-        document.getElementById('place-location').textContent = data.localidad;
-        document.getElementById('place-date').textContent = `📅 ${data.fecha}`;
-        document.getElementById('place-summary').textContent = data.resumen;
-
-        const notesContainer = document.getElementById('place-notes');
-        notesContainer.replaceChildren();
-        data.notas.forEach(nota => {
-            const li = document.createElement('li');
-            li.textContent = nota;
-            notesContainer.appendChild(li);
+        // -------------------------------------------------------------
+        // 3. ICONO Y MARCADOR TIPO CHECK
+        // -------------------------------------------------------------
+        const checkIcon = L.divIcon({
+            className: 'custom-check-icon',
+            html: '✓',
+            iconSize: [28, 28],
+            iconAnchor: [14, 14]
         });
 
-        const galleryContainer = document.getElementById('place-gallery');
-        galleryContainer.replaceChildren();
-        const estado = { cargadas: 0, errores: 0 };
+        const marker = L.marker(datosViaje.coordenadas, { icon: checkIcon }).addTo(map);
 
-        data.fotos.forEach((ruta, index) => {
-            galleryContainer.appendChild(crearFoto(ruta, index, data.fotos.length, estado));
-        });
-    }
+        // -------------------------------------------------------------
+        // 4. FUNCIÓN PARA RENDERIZAR LA INFORMACIÓN EN EL PANEL
+        // -------------------------------------------------------------
+        function cargarDatosPanel(data) {
+            document.getElementById('place-title').innerText = data.titulo;
+            document.getElementById('place-location').innerText = data.localidad;
+            document.getElementById('place-date').innerText = "📅 " + data.fecha;
+            document.getElementById('place-summary').innerText = data.resumen;
 
-    cargarDatosPanel(datosViaje);
+            // Renderizar lista de notas
+            const notesContainer = document.getElementById('place-notes');
+            notesContainer.innerHTML = '';
+            data.notes.forEach(nota => {
+                const li = document.createElement('li');
+                li.innerText = nota;
+                notesContainer.appendChild(li);
+            });
 
-    marker.on('click', () => {
-        map.flyTo(datosViaje.coordenadas, 14, { duration: 1.1 });
+            // Renderizar galería de fotos con fallback de imagen en caso de no existir localmente aún
+            const galleryContainer = document.getElementById('place-gallery');
+            galleryContainer.innerHTML = '';
+            data.fotos.forEach((fotoUrl, index) => {
+                const img = document.createElement('img');
+                img.src = fotoUrl;
+                img.alt = `Foto ${index + 1} en Cosquín`;
+                img.className = 'gallery-item';
+                // Imagen placeholder de respaldo si la foto local no existe todavía
+                img.onerror = function() {
+                    this.src = `https://picsum.photos/300/200?random=${index + 10}`;
+                };
+                galleryContainer.appendChild(img);
+            });
+        }
+
+        // Cargar datos por defecto al iniciar
         cargarDatosPanel(datosViaje);
-    });
 
-    // Leaflet necesita recalcular tamaño si el layout termina de asentarse.
-    window.addEventListener('load', () => setTimeout(() => map.invalidateSize(), 100));
-    window.addEventListener('resize', () => map.invalidateSize());
-
-    console.info('[Portal Rodrigo] Base URL:', document.baseURI);
-    console.info('[Portal Rodrigo] Primera foto:', assetUrl(datosViaje.fotos[0]));
-</script>
+        // Al hacer clic en el marcador, enfocar el mapa y refrescar la vista
+        marker.on('click', () => {
+            map.flyTo(datosViaje.coordenadas, 14, { duration: 1.2 });
+            cargarDatosPanel(datosViaje);
+        });
+    </script>
 </body>
 </html>
