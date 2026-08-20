@@ -1,6 +1,7 @@
 services:
   - type: web
     name: flash-work-mapa-editor
+    plan: free
     runtime: node
     rootDir: backend
     buildCommand: npm install
