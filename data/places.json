@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-19T00:00:00.000Z",
+  "places": [
+    {
+      "id": "cosquin-2025",
+      "locked": true,
+      "titulo": "Escapada a Cosquín & Pan de Azúcar",
+      "localidad": "Cosquín, Córdoba",
+      "coordenadas": [-31.2444, -64.4658],
+      "fecha": "2025-10-12",
+      "resumen": "Fuimos a pasar el día a Cosquín. Recorrimos el centro, la Plaza Próspero Molina y subimos al Cerro Pan de Azúcar para ver el atardecer.",
+      "notas": [
+        "Merendamos unos mates con criollos a orillas del Río Cosquín.",
+        "Subimos al Cerro Pan de Azúcar en la aerosilla.",
+        "Excelente vista panorámica de todo el Valle de Punilla.",
+        "Compramos alfajores artesanales en el centro."
+      ],
+      "fotos": [
+        "assets/fotos/cosquin-1.jpeg",
+        "assets/fotos/cosquin-2.jpeg",
+        "assets/fotos/cosquin-3.jpeg",
+        "assets/fotos/cosquin-4.jpeg",
+        "assets/fotos/cosquin-5.jpeg"
+      ]
+    }
+  ]
+}

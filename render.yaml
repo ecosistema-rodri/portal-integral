@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: flash-work-mapa-editor
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: ADMIN_KEY
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GITHUB_OWNER
+        sync: false
+      - key: GITHUB_REPO
+        sync: false
+      - key: GITHUB_BRANCH
+        value: main
+      - key: ALLOWED_ORIGIN
+        sync: false
+      - key: DATA_PATH
+        value: data/places.json
+      - key: UPLOAD_DIR
+        value: assets/uploads
