@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal-Rodrigo | Mapa de Cosquín</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #10b981;
+            --accent-hover: #059669;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        header h1 span {
+            color: var(--accent-color);
+        }
+
+        .badge {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        #app-container {
+            display: flex;
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #map {
+            flex: 1;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Sidebar info panel */
+        #sidebar {
+            width: 380px;
+            background-color: var(--card-bg);
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            z-index: 2;
+            transition: transform 0.3s ease;
+            box-shadow: -4px 0 15px rgba(0,0,0,0.3);
+        }
+
+        .sidebar-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.15rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-header .location-tag {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .sidebar-body {
+            padding: 1.25rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .section-title:first-child {
+            margin-top: 0;
+        }
+
+        .date-badge {
+            display: inline-block;
+            background: #334155;
+            color: #e2e8f0;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .summary-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+
+        /* Notes list */
+        .notes-list {
+            list-style: none;
+            margin-bottom: 1.25rem;
+        }
+
+        .notes-list li {
+            position: relative;
+            padding-left: 1.25rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+
+        .notes-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* Gallery */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+
+        .gallery-item {
+            width: 100%;
+            height: 110px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+            filter: brightness(1.1);
+        }
+
+        /* Custom Leaflet Marker Styling */
+        .custom-check-icon {
+            background-color: var(--accent-color);
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            color: white;
+            text-align: center;
+            line-height: 28px;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #app-container {
+                flex-direction: column;
+            }
+            #sidebar {
+                width: 100%;
+                height: 40%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Portal-Rodrigo <span>/ Bitácora Córdoba</span></h1>
+        <span class="badge">Estatus: Visitado</span>
+    </header>
+
+    <div id="app-container">
+        <!-- Mapa -->
+        <div id="map"></div>
+
+        <!-- Panel Lateral de Información -->
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <h2 id="place-title">Cargando...</h2>
+                <div class="location-tag">📍 <span id="place-location">-</span></div>
+            </div>
+            <div class="sidebar-body">
+                <span class="date-badge" id="place-date">-</span>
+
+                <div class="section-title">Resumen</div>
+                <p class="summary-text" id="place-summary">-</p>
+
+                <div class="section-title">Notas de la Visita</div>
+                <ul class="notes-list" id="place-notes"></ul>
+
+                <div class="section-title">Galería de Fotos</div>
+                <div class="gallery-grid" id="place-gallery"></div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script>
+        // -------------------------------------------------------------
+        // 1. BASE DE DATOS ESTÁTICA (JSON incorporado)
+        // -------------------------------------------------------------
+        const datosViaje = {
+            id: "cosquin-2025",
+            titulo: "Escapada a Cosquín & Pan de Azúcar",
+            localidad: "Cosquín, Córdoba",
+            coordenadas: [-31.2444, -64.4658],
+            fecha: "12 de Octubre, 2025",
+            resumen: "Fuimos a pasar el día a Cosquín. Recorrimos el centro, la Plaza Próspero Molina y subimos al Cerro Pan de Azúcar para ver el atardecer.",
+            notas: [
+                "Merendamos unos mates con criollos a orillas del Río Cosquín.",
+                "Subimos al Cerro Pan de Azúcar en la aerosolilla.",
+                "Excelente vista panóramica de todo el Valle de Punilla.",
+                "Compramos alfajores artesanales en el centro."
+            ],
+            // Rutas relativas a las fotos guardadas en el repositorio (assets/fotos/)
+            fotos: [
+                "assets/fotos/cosquin-1.jpg",
+                "assets/fotos/cosquin-2.jpg",
+                "assets/fotos/cosquin-3.jpg",
+                "assets/fotos/cosquin-4.jpg"
+            ]
+        };
+
+        // -------------------------------------------------------------
+        // 2. INICIALIZACIÓN DEL MAPA
+        // -------------------------------------------------------------
+        // Centramos el mapa en Cosquín con nivel de zoom 13
+        const map = L.map('map').setView(datosViaje.coordenadas, 13);
+
+        // Capa de mapa (CartoDB Positron: limpia, oscura/elegante)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
+
+        // -------------------------------------------------------------
+        // 3. ICONO Y MARCADOR TIPO CHECK
+        // -------------------------------------------------------------
+        const checkIcon = L.divIcon({
+            className: 'custom-check-icon',
+            html: '✓',
+            iconSize: [28, 28],
+            iconAnchor: [14, 14]
+        });
+
+        const marker = L.marker(datosViaje.coordenadas, { icon: checkIcon }).addTo(map);
+
+        // -------------------------------------------------------------
+        // 4. FUNCIÓN PARA RENDERIZAR LA INFORMACIÓN EN EL PANEL
+        // -------------------------------------------------------------
+        function cargarDatosPanel(data) {
+            document.getElementById('place-title').innerText = data.titulo;
+            document.getElementById('place-location').innerText = data.localidad;
+            document.getElementById('place-date').innerText = "📅 " + data.fecha;
+            document.getElementById('place-summary').innerText = data.resumen;
+
+            // Renderizar lista de notas
+            const notesContainer = document.getElementById('place-notes');
+            notesContainer.innerHTML = '';
+            data.notes.forEach(nota => {
+                const li = document.createElement('li');
+                li.innerText = nota;
+                notesContainer.appendChild(li);
+            });
+
+            // Renderizar galería de fotos con fallback de imagen en caso de no existir localmente aún
+            const galleryContainer = document.getElementById('place-gallery');
+            galleryContainer.innerHTML = '';
+            data.fotos.forEach((fotoUrl, index) => {
+                const img = document.createElement('img');
+                img.src = fotoUrl;
+                img.alt = `Foto ${index + 1} en Cosquín`;
+                img.className = 'gallery-item';
+                // Imagen placeholder de respaldo si la foto local no existe todavía
+                img.onerror = function() {
+                    this.src = `https://picsum.photos/300/200?random=${index + 10}`;
+                };
+                galleryContainer.appendChild(img);
+            });
+        }
+
+        // Cargar datos por defecto al iniciar
+        cargarDatosPanel(datosViaje);
+
+        // Al hacer clic en el marcador, enfocar el mapa y refrescar la vista
+        marker.on('click', () => {
+            map.flyTo(datosViaje.coordenadas, 14, { duration: 1.2 });
+            cargarDatosPanel(datosViaje);
+        });
+    </script>
+</body>
+</html>
