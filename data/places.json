@@ -1,15 +1,18 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-19T00:00:00.000Z",
+  "updatedAt": "2026-08-20T01:21:57.706Z",
   "places": [
     {
       "id": "cosquin-2025",
       "locked": true,
-      "titulo": "Escapada a Cosquín & Pan de Azúcar",
+      "titulo": "Cosquín & Pan de Azúcar",
       "localidad": "Cosquín, Córdoba",
-      "coordenadas": [-31.2444, -64.4658],
-      "fecha": "2025-10-12",
-      "resumen": "Fuimos a pasar el día a Cosquín. Recorrimos el centro, la Plaza Próspero Molina y subimos al Cerro Pan de Azúcar para ver el atardecer.",
+      "coordenadas": [
+        -31.2444,
+        -64.4658
+      ],
+      "fecha": "2026-08-15",
+      "resumen": "En el Tren de las Sierras fuimos a pasar el día a Cosquín. Recorrimos el centro, la Plaza San Martín, conseguimos un taxista, \"Edu\", que nos salvó la vida y nos llevó por mucho menos que los otros hasta la base del Pan de Azúcar. Subimos al Cerro Pan de Azúcar, todo nublado. Después comimos unas milas en Alfred, y volvimos en bondi! La Churri se durmió en el camino de regreso, y también en el de ida, estaba cansada pobre mi hermosa",
       "notas": [
         "Merendamos unos mates con criollos a orillas del Río Cosquín.",
         "Subimos al Cerro Pan de Azúcar en la aerosilla.",
