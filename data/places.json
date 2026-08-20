@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-20T01:21:57.706Z",
+  "updatedAt": "2026-08-20T01:23:45.279Z",
   "places": [
     {
       "id": "cosquin-2025",
@@ -14,10 +14,15 @@
       "fecha": "2026-08-15",
       "resumen": "En el Tren de las Sierras fuimos a pasar el día a Cosquín. Recorrimos el centro, la Plaza San Martín, conseguimos un taxista, \"Edu\", que nos salvó la vida y nos llevó por mucho menos que los otros hasta la base del Pan de Azúcar. Subimos al Cerro Pan de Azúcar, todo nublado. Después comimos unas milas en Alfred, y volvimos en bondi! La Churri se durmió en el camino de regreso, y también en el de ida, estaba cansada pobre mi hermosa",
       "notas": [
-        "Merendamos unos mates con criollos a orillas del Río Cosquín.",
-        "Subimos al Cerro Pan de Azúcar en la aerosilla.",
-        "Excelente vista panorámica de todo el Valle de Punilla.",
-        "Compramos alfajores artesanales en el centro."
+        "Fuimos en el Tren de las Sierras",
+        "La Churri se durmió a la ida",
+        "Subimos al Cerro Pan de Azúcar a trekking (no aerosilla).",
+        "Comimos en el centro de Cosquín",
+        "Fuimos al Museo de Folklore",
+        "Subimos al escenario del Cosquín Folklore",
+        "Tomamos un helado",
+        "Volvimos en bondi",
+        "La Churri se volvió en el regreso"
       ],
       "fotos": [
         "assets/fotos/cosquin-1.jpeg",
